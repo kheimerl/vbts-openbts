@@ -123,7 +123,7 @@ bool update_pa(){
     }
 
     //otherwise see if we should turn the PA off
-    int pa_timeout = gConfig.getNum("VBTS.PA.Timeout", 5 * 60);
+    int pa_timeout = gConfig.getNum("VBTS.PA.Timeout");
     ScopedLock lock (pa_lock);
     if (pa_on && last_update && 
 	rawtime > pa_timeout + last_update){
@@ -224,8 +224,8 @@ PAController::PAController()
     registry->addMethod("offWithReason", offMethodReason);
     registry->addMethod("status", statusMethod);
     
-    long rpc_port = gConfig.getNum("VBTS.PA.RPCPort", 8080);
-    string rpc_log = gConfig.getStr("VBTS.PA.RPCLogLoc", "/tmp/xmlrpc.log");
+    long rpc_port = gConfig.getNum("VBTS.PA.RPCPort");
+    string rpc_log = gConfig.getStr("VBTS.PA.RPCLogLoc");
     
     RPCServer = new xmlrpc_c::serverAbyss(*registry,
 					  rpc_port,
@@ -233,15 +233,15 @@ PAController::PAController()
 	);
 
 #ifndef DONT_USE_SERIAL
-    string serial_loc = gConfig.getStr("VBTS.PA.SerialLoc", "/dev/ttyACM0");
+    string serial_loc = gConfig.getStr("VBTS.PA.SerialLoc");
     fd1 = open (serial_loc.c_str(), O_RDWR | O_NOCTTY | O_NDELAY);
 
-    on_cmd = gConfig.getStr("VBTS.PA.OnCommand", "O0=1\r");
-    off_cmd = gConfig.getStr("VBTS.PA.OffCommand", "O0=0\r");
+    on_cmd = gConfig.getStr("VBTS.PA.OnCommand");
+    off_cmd = gConfig.getStr("VBTS.PA.OffCommand");
 #endif
 
-    string start_time = gConfig.getStr("VBTS.PA.StartTime", DEFAULT_START_TIME);
-    string end_time = gConfig.getStr("VBTS.PA.EndTime", DEFAULT_END_TIME);
+    string start_time = gConfig.getStr("VBTS.PA.StartTime");
+    string end_time = gConfig.getStr("VBTS.PA.EndTime");
 
     if (strptime(start_time.c_str(), TIME_FORMAT, &start_tm) ==  NULL){
 	LOG(ALERT) << "MALFORMED START TIME";
