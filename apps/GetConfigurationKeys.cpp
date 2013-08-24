@@ -2757,5 +2757,105 @@ ConfigurationKeyMap getConfigurationKeys()
 	map[tmp->getName()] = *tmp;
 	delete tmp;
 
+	//Kurtis VBTS Config options
+	tmp = new ConfigurationKey("VBTS.PA.Timeout","300",
+		"timeout in seconds",
+		ConfigurationKey::CUSTOMER,
+		ConfigurationKey::VALRANGE,
+		"0:60000(1)",// educated guess
+		false,
+		"The amount of time without any communications required for VBTS to power down the PA"
+	);
+	map[tmp->getName()] = *tmp;
+	delete tmp;
+
+	tmp = new ConfigurationKey("VBTS.PA.SerialLoc","/dev/ttyACM0",
+		"",
+		ConfigurationKey::DEVELOPER,
+		ConfigurationKey::FILEPATH,
+		"",// educated guess
+		true,
+		"The location of the Serial Line controlling the PA. Static."
+	);
+	map[tmp->getName()] = *tmp;
+	delete tmp;
+
+	tmp = new ConfigurationKey("VBTS.PA.OnCommand","O0=1\\r",
+		"",
+		ConfigurationKey::DEVELOPER,
+		ConfigurationKey::STRING,
+		".+",// educated guess
+		true,
+		"The command send over the serial line to turn the PA on. Static."
+	);
+	map[tmp->getName()] = *tmp;
+	delete tmp;
+
+	tmp = new ConfigurationKey("VBTS.PA.OffCommand","O0=0\\r",
+		"",
+		ConfigurationKey::DEVELOPER,
+		ConfigurationKey::STRING,
+		".+",// educated guess
+		true,
+		"The command send over the serial line to turn the PA off. Static."
+	);
+	map[tmp->getName()] = *tmp;
+	delete tmp;
+
+	tmp = new ConfigurationKey("VBTS.PA.RPCPort","8080",
+		"",
+		ConfigurationKey::DEVELOPER,
+		ConfigurationKey::PORT,
+		"",
+		true,
+		"The port the RPC server listens on. Static."
+	);
+	map[tmp->getName()] = *tmp;
+	delete tmp;
+
+	tmp = new ConfigurationKey("VBTS.PA.RPCLogLoc","/tmp/xmlrpc.log",
+		"",
+		ConfigurationKey::DEVELOPER,
+		ConfigurationKey::FILEPATH,
+		".+",// educated guess
+		true,
+		"The Location of the RPC logs. Static."
+	);
+	map[tmp->getName()] = *tmp;
+	delete tmp;
+
+	tmp = new ConfigurationKey("VBTS.PA.StartTime","06:00",
+		"",
+		ConfigurationKey::CUSTOMER,
+		ConfigurationKey::STRING,
+		"^\\d{2}:\\d{2}$",// educated guess
+		true,
+		"The time to start transmitting regardless of idle time. Static."
+	);
+	map[tmp->getName()] = *tmp;
+	delete tmp;
+
+	tmp = new ConfigurationKey("VBTS.PA.EndTime","23:00",
+		"",
+		ConfigurationKey::CUSTOMER,
+		ConfigurationKey::STRING,
+		"^\\d{2}:\\d{2}$",// educated guess
+		true,
+		"The time to end transmitting. Static."
+	);
+	map[tmp->getName()] = *tmp;
+	delete tmp;
+
+	tmp = new ConfigurationKey("VBTS.Transceiver.Overthresh","100",
+		"powers",
+		ConfigurationKey::CUSTOMER,
+		ConfigurationKey::VALRANGE,
+		"1:60000(1)",// educated guess
+		false,
+		"The power (over the noise floor) required to wake VBTS"
+	);
+	map[tmp->getName()] = *tmp;
+	delete tmp;
+
 	return map;
 }

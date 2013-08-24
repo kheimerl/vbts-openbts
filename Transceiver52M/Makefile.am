@@ -55,6 +55,7 @@ COMMON_SOURCES = \
 	radioClock.cpp \
 	sigProcLib.cpp \
 	Transceiver.cpp \
+	PAController.cpp \
 	DummyLoad.cpp
 
 if RESAMPLE
@@ -80,6 +81,7 @@ noinst_HEADERS = \
 	radioDevice.h \
 	sigProcLib.h \
 	Transceiver.h \
+	PAController.h \
 	USRPDevice.h \
 	DummyLoad.h \
 	rcvLPF_651.h \
