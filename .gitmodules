@@ -1,0 +1,9 @@
+[submodule "sqlite3"]
+	path = sqlite3
+	url = git@github.com:kheimerl/vbts-sqlite3.git
+[submodule "CommonLibs"]
+	path = CommonLibs
+	url = git@github.com:kheimerl/vbts-CommonLibs.git
+[submodule "SR"]
+	path = SR
+	url = git@github.com:kheimerl/vbts-subscriberRegistry.git
