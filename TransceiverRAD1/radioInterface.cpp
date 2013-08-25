@@ -161,10 +161,21 @@ void RadioInterface::pushBuffer(void) {
   if (sendCursor < 2*INCHUNK*samplesPerSymbol) return;
 
   // send resampleVector
-  int samplesWritten = mRadio->writeSamples(sendBuffer,
+  // int samplesWritten = mRadio->writeSamples(sendBuffer,
+  // 					  INCHUNK*samplesPerSymbol,
+  // 					  &underrun,
+  // 					  writeTimestamp); 
+  // kurtis
+  int samplesWritten;
+  if (pa.state()){
+      samplesWritten = mRadio->writeSamples(sendBuffer,
 					  INCHUNK*samplesPerSymbol,
 					  &underrun,
 					  writeTimestamp); 
+  } else {
+      samplesWritten = INCHUNK*samplesPerSymbol;
+  }
+
   //LOG(DEBUG) << "writeTimestamp: " << writeTimestamp << ", samplesWritten: " << samplesWritten;
    
   writeTimestamp += (TIMESTAMP) samplesWritten;
@@ -233,6 +244,9 @@ void RadioInterface::start()
 
   sendBuffer = new short[2*2*INCHUNK*samplesPerSymbol];
   rcvBuffer = new short[2*2*OUTCHUNK*samplesPerSymbol];
+
+  //kurtis
+  runController(&pa);
  
   mOn = true;
 

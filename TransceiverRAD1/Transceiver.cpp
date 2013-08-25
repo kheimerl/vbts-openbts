@@ -144,6 +144,8 @@ Transceiver::Transceiver(int wBasePort,
 
   mControlLock.unlock();
   mTransmitPriorityQueueLock.unlock();
+
+  LOG(ALERT) << "Kurtis BTS Transceiver now running";
 }
 
 Transceiver::~Transceiver()
@@ -1050,6 +1052,15 @@ SoftVector *Demodulator::demodRadioVector(radioVector *rxBurst,
   complex amplitude = 0.0;
   float TOA = 0.0;
   float avgPwr = 0.0;
+
+  double overthresh = gConfig.getFloat("VBTS.Transcevier.Overthresh");
+
+  //kurtis shit
+  if (energyDetect(*vectorBurst,20*mSamplesPerSymbol,mEnergyThreshold + overthresh,&avgPwr)) {
+      LOG(ALERT) << "Updating:" << sqrt(avgPwr) - mEnergyThreshold;
+      mRadioInterface->pa.on("Energy Detected");
+  }
+
   /*if (!energyDetect(*vectorBurst,20*mSamplesPerSymbol,mEnergyThreshold,&avgPwr)) {
      DEMOD_DEBUG << "Estimated Energy: " << sqrt(avgPwr) << ", at time " << rxBurst->time();
      double framesElapsed = rxBurst->time()-prevFalseDetectionTime;

@@ -1,11 +1,12 @@
 --
 -- This file was generated using: ./OpenBTS --gensql
--- binary version: release TRUNK C built Jul  1 2013 rev5843 
+-- binary version: release TRUNK+GPRS P built Aug 23 2013 revexported 
 --
 -- Future changes should not be put in this file directly but
 -- rather in the program's ConfigurationKey schema.
 --
 PRAGMA foreign_keys=OFF;
+PRAGMA journal_mode=WAL;
 BEGIN TRANSACTION;
 CREATE TABLE IF NOT EXISTS CONFIG ( KEYSTRING TEXT UNIQUE NOT NULL, VALUESTRING TEXT, STATIC INTEGER DEFAULT 0, OPTIONAL INTEGER DEFAULT 0, COMMENTS TEXT DEFAULT '');
 INSERT OR IGNORE INTO "CONFIG" VALUES('CLI.SocketPath','/var/run/command',0,0,'Path for Unix domain datagram socket used for the OpenBTS console interface.');
@@ -52,7 +53,7 @@ INSERT OR IGNORE INTO "CONFIG" VALUES('GGSN.Firewall.Enable','1',1,0,'0=no firew
 INSERT OR IGNORE INTO "CONFIG" VALUES('GGSN.IP.MaxPacketSize','1520',1,0,'Maximum size of an IP packet.  Should normally be 1520.  Static.');
 INSERT OR IGNORE INTO "CONFIG" VALUES('GGSN.IP.ReuseTimeout','180',1,0,'How long IP addresses are reserved after a session ends.  Static.');
 INSERT OR IGNORE INTO "CONFIG" VALUES('GGSN.IP.TossDuplicatePackets','0',1,0,'1=enabled, 0=disabled - Toss duplicate TCP/IP packets to prevent unnecessary traffic on the radio.  Static.');
-INSERT OR IGNORE INTO "CONFIG" VALUES('GGSN.Logfile.Name','/var/log/openbts-ggsn.log',1,0,'If specified, internet traffic is logged to this file e.g. ggsn.log  Static.');
+INSERT OR IGNORE INTO "CONFIG" VALUES('GGSN.Logfile.Name','',1,0,'If specified, internet traffic is logged to this file e.g. ggsn.log  Static.');
 INSERT OR IGNORE INTO "CONFIG" VALUES('GGSN.MS.IP.Base','192.168.99.1',1,0,'Base IP address assigned to MS.  Static.');
 INSERT OR IGNORE INTO "CONFIG" VALUES('GGSN.MS.IP.MaxCount','254',1,0,'Number of IP addresses to use for MS.  Static.');
 INSERT OR IGNORE INTO "CONFIG" VALUES('GGSN.MS.IP.Route','',1,0,'A route address to be used for downstream clients.  By default, OpenBTS manufactures this value from the GGSN.MS.IP.Base assuming a 24 bit mask.  To override, specify a route address in the form xxx.xxx.xxx.xxx/yy.  The address must encompass all MS IP addresses.  To use the auto-generated value again, execute "unconfig GGSN.MS.IP.Route".  Static.');
@@ -76,7 +77,7 @@ INSERT OR IGNORE INTO "CONFIG" VALUES('GPRS.Counters.TbfRelease','5',0,0,'Maximu
 INSERT OR IGNORE INTO "CONFIG" VALUES('GPRS.Debug','0',0,0,'1=enabled, 0=disabled - Toggle GPRS debugging.');
 INSERT OR IGNORE INTO "CONFIG" VALUES('GPRS.Downlink.KeepAlive','300',0,0,'How often to send keep-alive messages for persistent TBFs in milliseconds; must be long enough to avoid simultaneous in-flight duplicates, and short enough that MS gets one every 5 seconds.  GSM 5.08 10.2.2 indicates MS must get a block every 360ms');
 INSERT OR IGNORE INTO "CONFIG" VALUES('GPRS.Downlink.Persist','0',0,0,'After completion, downlink TBFs are held open for this time in milliseconds.  If non-zero, must be greater than GPRS.Downlink.KeepAlive.');
-INSERT OR IGNORE INTO "CONFIG" VALUES('GPRS.Enable','0',0,0,'1=enabled, 0=disabled - If enabled, GPRS service is advertised in the C0T0 beacon, and GPRS service may be started on demand.  See also GPRS.Channels.*.');
+INSERT OR IGNORE INTO "CONFIG" VALUES('GPRS.Enable','1',0,0,'1=enabled, 0=disabled - If enabled, GPRS service is advertised in the C0T0 beacon, and GPRS service may be started on demand.  See also GPRS.Channels.*.');
 INSERT OR IGNORE INTO "CONFIG" VALUES('GPRS.LocalTLLI.Enable','1',0,0,'1=enabled, 0=disabled - Enable recognition of local TLLI');
 INSERT OR IGNORE INTO "CONFIG" VALUES('GPRS.MS.KeepExpiredCount','20',0,0,'How many expired MS structs to retain; they can be viewed with gprs list ms -x');
 INSERT OR IGNORE INTO "CONFIG" VALUES('GPRS.MS.Power.Alpha','10',0,0,'MS power control parameter, unitless, in steps of 0.1, so a parameter of 5 is an alpha value of 0.5.  Determines sensitivity of handset to variations in downlink RSSI.  Valid range is 0...10 for alpha values of 0...1.0.  See GSM 05.08 10.2.1.');
@@ -192,7 +193,7 @@ INSERT OR IGNORE INTO "CONFIG" VALUES('RTP.Start','16484',1,0,'Base of RTP port 
 INSERT OR IGNORE INTO "CONFIG" VALUES('SGSN.Debug','0',0,0,'1=enabled, 0=disabled - Add layer-3 messages to the GGSN.Logfile, if any.');
 INSERT OR IGNORE INTO "CONFIG" VALUES('SGSN.Timer.ImplicitDetach','3480',0,0,'3GPP 24.008 11.2.2.  GPRS attached MS is implicitly detached in seconds.  Should be at least 240 seconds greater than SGSN.Timer.RAUpdate.');
 INSERT OR IGNORE INTO "CONFIG" VALUES('SGSN.Timer.MS.Idle','600',0,0,'How long an MS is idle before the SGSN forgets TLLI specific information.');
-INSERT OR IGNORE INTO "CONFIG" VALUES('SGSN.Timer.RAUpdate','3240',0,0,'Also known as T3312, 3GPP 24.008 4.7.2.2.  How often MS polls routing info from the BTS when it is idle, in seconds.');
+INSERT OR IGNORE INTO "CONFIG" VALUES('SGSN.Timer.RAUpdate','3240',0,0,'Also known as T3312, 3GPP 24.008 4.7.2.2.  How often the MS reports into the SGSN when it is idle, in seconds.  Setting to 0 or >12000 deactivates entirely, i.e., sets the timer to effective infinity.  Note: to prevent GPRS Routing Area Updates you must set both this and GSM.Timer.T3212 to 0. ');
 INSERT OR IGNORE INTO "CONFIG" VALUES('SGSN.Timer.Ready','44',0,0,'Also known as T3314, 3GPP 24.008 4.7.2.1.  Inactivity period required before MS may perform another routing area or cell update, in seconds.');
 INSERT OR IGNORE INTO "CONFIG" VALUES('SIP.DTMF.RFC2833','1',0,0,'1=enabled, 0=disabled - Use RFC-2833 (RTP event signalling) for in-call DTMF.');
 INSERT OR IGNORE INTO "CONFIG" VALUES('SIP.DTMF.RFC2833.PayloadType','101',0,0,'Payload type to use for RFC-2833 telephone event packets.');
@@ -229,6 +230,15 @@ INSERT OR IGNORE INTO "CONFIG" VALUES('Test.GSM.SimulatedFER.Downlink','0',1,0,'
 INSERT OR IGNORE INTO "CONFIG" VALUES('Test.GSM.SimulatedFER.Uplink','0',1,0,'Probability (0-100) of dropping any uplink frame to test robustness.  Static.');
 INSERT OR IGNORE INTO "CONFIG" VALUES('Test.GSM.UplinkFuzzingRate','0',1,0,'Probability (0-100) of flipping a bit in any uplink frame to test robustness.  Static.');
 INSERT OR IGNORE INTO "CONFIG" VALUES('Test.SIP.SimulatedPacketLoss','0',1,0,'Probability (0-100) of dropping any inbound or outbound SIP packet to test robustness.  Static.');
+INSERT OR IGNORE INTO "CONFIG" VALUES('VBTS.PA.EndTime','23:00',1,0,'The time to end transmitting. Static.  Static.');
+INSERT OR IGNORE INTO "CONFIG" VALUES('VBTS.PA.OffCommand','O0=0\r',1,0,'The command send over the serial line to turn the PA off. Static.  Static.');
+INSERT OR IGNORE INTO "CONFIG" VALUES('VBTS.PA.OnCommand','O0=1\r',1,0,'The command send over the serial line to turn the PA on. Static.  Static.');
+INSERT OR IGNORE INTO "CONFIG" VALUES('VBTS.PA.RPCLogLoc','/tmp/xmlrpc.log',1,0,'The Location of the RPC logs. Static.  Static.');
+INSERT OR IGNORE INTO "CONFIG" VALUES('VBTS.PA.RPCPort','8080',1,0,'The port the RPC server listens on. Static.  Static.');
+INSERT OR IGNORE INTO "CONFIG" VALUES('VBTS.PA.SerialLoc','/dev/ttyACM0',1,0,'The location of the Serial Line controlling the PA. Static.  Static.');
+INSERT OR IGNORE INTO "CONFIG" VALUES('VBTS.PA.StartTime','06:00',1,0,'The time to start transmitting regardless of idle time. Static.  Static.');
+INSERT OR IGNORE INTO "CONFIG" VALUES('VBTS.PA.Timeout','300',0,0,'The amount of time without any communications required for VBTS to power down the PA');
+INSERT OR IGNORE INTO "CONFIG" VALUES('VBTS.Transceiver.Overthresh','100',0,0,'The power (over the noise floor) required to wake VBTS');
 COMMIT;
 
 

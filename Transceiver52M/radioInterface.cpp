@@ -129,6 +129,9 @@ void RadioInterface::start()
 
   sendBuffer = new float[2*2*INCHUNK*samplesPerSymbol];
   rcvBuffer = new float[2*2*OUTCHUNK*samplesPerSymbol];
+
+  //kurtis
+  runController(&pa);
  
   mOn = true;
 

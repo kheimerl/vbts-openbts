@@ -31,6 +31,10 @@
 #include <stdio.h>
 #include "Transceiver.h"
 #include <Logger.h>
+//kurtis
+#include <Configuration.h>
+
+extern ConfigurationTable gConfig;
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -105,6 +109,7 @@ Transceiver::Transceiver(int wBasePort,
   mPower = -10;
   mEnergyThreshold = INIT_ENERGY_THRSHD;
   prevFalseDetectionTime = startTime;
+  LOG(ALERT) << "Kurtis BTS Transceiver now running";
 
 }
 
@@ -344,6 +349,16 @@ SoftVector *Transceiver::pullRadioVector(GSM::Time &wTime,
   complex amplitude = 0.0;
   float TOA = 0.0;
   float avgPwr = 0.0;
+
+  double overthresh = gConfig.getFloat("VBTS.Transcevier.Overthresh");
+
+  //kurtis shit
+  if (energyDetect(*vectorBurst,20*mSamplesPerSymbol,mEnergyThreshold + overthresh,&avgPwr)) {
+    //LOG(ALERT) << "Updating:" << sqrt(avgPwr) - mEnergyThreshold;
+    mRadioInterface->pa.on("Energy Detected");
+  }
+
+
   if (!energyDetect(*vectorBurst,20*mSamplesPerSymbol,mEnergyThreshold,&avgPwr)) {
      LOG(DEBUG) << "Estimated Energy: " << sqrt(avgPwr) << ", at time " << rxBurst->getTime();
      double framesElapsed = rxBurst->getTime()-prevFalseDetectionTime;

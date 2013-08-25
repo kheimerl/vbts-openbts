@@ -35,7 +35,7 @@ else
 AM_CPPFLAGS = $(STD_DEFINES_AND_INCLUDES)
 endif
 endif
-AM_CXXFLAGS = -ldl -lpthread
+AM_CXXFLAGS = -ldl -lpthread -lxmlrpc++ -lxmlrpc_xmlparse -lxmlrpc_xmltok -lxmlrpc_server -lxmlrpc_util -lxmlrpc_server++ -lxmlrpc_server_abyss -lxmlrpc_server_abyss++
 
 rev2dir = $(datadir)/usrp/rev2
 rev4dir = $(datadir)/usrp/rev4
