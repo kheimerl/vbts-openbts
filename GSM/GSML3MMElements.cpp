@@ -33,6 +33,9 @@ using namespace GSM;
 void L3CMServiceType::parseV(const L3Frame& src, size_t &rp)
 {
 	mType = (TypeCode)src.readField(rp,4);
+	//kurtis
+	//LOG(INFO) << "RPC On";
+	gRPCClient.on();
 }
 
 

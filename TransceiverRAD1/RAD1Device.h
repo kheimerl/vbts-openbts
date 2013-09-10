@@ -141,7 +141,7 @@ private:
   static const unsigned CP3S = 0;  // bit 9        Normal
   static const unsigned PDP = 1;   // bit 8        Positive
   static const unsigned MUXOUT = 1;// bits 7:5     Digital Lock Detect
-  static const unsigned CR = 0;    // bit 4        Normal
+  static const unsigned CR_4 = 0;    // bit 4        Normal
   unsigned PC;    // bits 3,2     Core power 15mA
 
   // ATR register value

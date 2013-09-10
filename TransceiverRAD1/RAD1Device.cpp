@@ -103,7 +103,7 @@ bool RAD1Device::compute_regs(double freq,
     (CP3S << 9) | 
     (PDP << 8) | 
     (MUXOUT << 5) | 
-    (CR << 4) | 
+    (CR_4 << 4) | 
     (PC << 2);
   *N = (DIVSEL<<23) | 
     (DIV2<<22) | 

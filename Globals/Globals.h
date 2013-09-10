@@ -31,6 +31,8 @@
 #include <TMSITable.h>
 #include <SubscriberRegistry.h>
 #include <TRXManager.h>
+//kurtis
+#include <PARPCClient.h>
 #include <Reporting.h>
 
 
@@ -68,6 +70,9 @@ extern TransceiverManager gTRX;
 void gResetWatchdog();
 size_t gWatchdogRemaining();
 bool gWatchdogExpired();
+
+//kurtis
+extern PARPCClient gRPCClient;
 
 extern ReportingTable gReports;
 #endif
