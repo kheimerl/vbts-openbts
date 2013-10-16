@@ -138,7 +138,7 @@ void startTransceiver()
 	// If the path is not defined, the transceiver must be started by some other process.
 	char trans_args[20];
 	std::string serialAddy = gConfig.getStr("GSM.Radio.USRPSerial");
-	if (serialAddy.length() > 8){
+	if (serialAddy.length() >= 8){
 		sprintf(trans_args,"%1d serial=%s",(int)gConfig.getNum("GSM.Radio.ARFCNs"), serialAddy.c_str());
 	} else{
 		sprintf(trans_args,"%1d",(int)gConfig.getNum("GSM.Radio.ARFCNs"));

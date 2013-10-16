@@ -1980,7 +1980,6 @@ ConfigurationKeyMap getConfigurationKeys()
 	);
 	map[tmp->getName()] = *tmp;
 	delete tmp;
-	
 
 	tmp = new ConfigurationKey("GSM.Radio.Band","900",
 		"",
