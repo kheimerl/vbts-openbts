@@ -1969,6 +1969,19 @@ ConfigurationKeyMap getConfigurationKeys()
 	map[tmp->getName()] = *tmp;
 	delete tmp;
 
+	//kurtis
+	tmp = new ConfigurationKey("GSM.Radio.USRPSerial","",
+		"",
+		ConfigurationKey::CUSTOMER,
+		ConfigurationKey::STRING,
+		"^[A-Z0-9]+$",
+		false,
+		"The Serial number of the USRP you wish to use"
+	);
+	map[tmp->getName()] = *tmp;
+	delete tmp;
+	
+
 	tmp = new ConfigurationKey("GSM.Radio.Band","900",
 		"",
 		ConfigurationKey::CUSTOMERWARN,

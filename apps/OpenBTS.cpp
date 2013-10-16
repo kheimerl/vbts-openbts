@@ -131,18 +131,24 @@ pid_t gTransceiverPid = 0;
 void startTransceiver()
 {
 	// kill any stray transceiver process
-	if (system("killall transceiver 2>/dev/null")) {}
+	//don't do this, we want to run two of them -kurtis
+	//if (system("killall transceiver 2>/dev/null")) {}
 
 	// Start the transceiver binary, if the path is defined.
 	// If the path is not defined, the transceiver must be started by some other process.
-	char TRXnumARFCN[4];
-	sprintf(TRXnumARFCN,"%1d",(int)gConfig.getNum("GSM.Radio.ARFCNs"));
-	LOG(NOTICE) << "starting transceiver " << transceiverPath << " " << TRXnumARFCN;
+	char trans_args[20];
+	std::string serialAddy = gConfig.getStr("GSM.Radio.USRPSerial");
+	if (serialAddy.length() > 8){
+		sprintf(trans_args,"%1d serial=%s",(int)gConfig.getNum("GSM.Radio.ARFCNs"), serialAddy.c_str());
+	} else{
+		sprintf(trans_args,"%1d",(int)gConfig.getNum("GSM.Radio.ARFCNs"));
+	}
+	LOG(NOTICE) << "starting transceiver " << transceiverPath << " " << trans_args;
 	gTransceiverPid = vfork();
 	LOG_ASSERT(gTransceiverPid>=0);
 	if (gTransceiverPid==0) {
 		// Pid==0 means this is the process that starts the transceiver.
-		execlp(transceiverPath,transceiverPath,TRXnumARFCN,(void*)NULL);
+		execlp(transceiverPath,transceiverPath,trans_args,(void*)NULL);
 		LOG(EMERG) << "cannot find " << transceiverPath;
 		_exit(1);
 	} else {
