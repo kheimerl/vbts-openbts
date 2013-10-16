@@ -57,7 +57,7 @@ ConfigurationKeyMap getConfigurationKeys()
 	ConfigurationKeyMap map;
 	ConfigurationKey *tmp;
 
-	tmp = new ConfigurationKey("CLI.SocketPath","/var/run/OpenBTS/command",
+	tmp = new ConfigurationKey("CLI.SocketPath","/var/run/command",
 		"",
 		ConfigurationKey::CUSTOMERWARN,
 		ConfigurationKey::FILEPATH,
@@ -383,7 +383,7 @@ ConfigurationKeyMap getConfigurationKeys()
 	map[tmp->getName()] = *tmp;
 	delete tmp;
 
-	tmp = new ConfigurationKey("Control.Reporting.PhysStatusTable","/var/run/OpenBTS/ChannelTable.db",
+	tmp = new ConfigurationKey("Control.Reporting.PhysStatusTable","/var/run/ChannelTable.db",
 		"",
 		ConfigurationKey::CUSTOMERWARN,
 		ConfigurationKey::FILEPATH,
@@ -405,7 +405,7 @@ ConfigurationKeyMap getConfigurationKeys()
 	map[tmp->getName()] = *tmp;
 	delete tmp;
 
-	tmp = new ConfigurationKey("Control.Reporting.TMSITable","/var/run/OpenBTS/TMSITable.db",
+	tmp = new ConfigurationKey("Control.Reporting.TMSITable","/var/run/TMSITable.db",
 		"",
 		ConfigurationKey::CUSTOMERWARN,
 		ConfigurationKey::FILEPATH,
@@ -416,7 +416,7 @@ ConfigurationKeyMap getConfigurationKeys()
 	map[tmp->getName()] = *tmp;
 	delete tmp;
 
-	tmp = new ConfigurationKey("Control.Reporting.TransactionTable","/var/run/OpenBTS/TransactionTable.db",
+	tmp = new ConfigurationKey("Control.Reporting.TransactionTable","/var/run/TransactionTable.db",
 		"",
 		ConfigurationKey::CUSTOMERWARN,
 		ConfigurationKey::FILEPATH,
@@ -457,7 +457,7 @@ ConfigurationKeyMap getConfigurationKeys()
 		true,
 		"File path for SMSCB scheduling database.  "
 			"By default, this feature is disabled.  "
-			"To enable, specify a file path for the database e.g. /var/run/OpenBTS/SMSCB.db.  "
+			"To enable, specify a file path for the database e.g. /var/run/SMSCB.db.  "
 			"To disable again, execute \"unconfig Control.SMSCB.Table\"."
 	);
 	map[tmp->getName()] = *tmp;
@@ -537,7 +537,7 @@ ConfigurationKeyMap getConfigurationKeys()
 		"minutes",
 		ConfigurationKey::DEVELOPER,
 		ConfigurationKey::VALRANGE,
-		"45:75",// educated guess
+		"0:6000",// educated guess
 		false,
 		"Number of minutes before the radio watchdog expires and OpenBTS is restarted."
 	);
@@ -2103,14 +2103,14 @@ ConfigurationKeyMap getConfigurationKeys()
 	map[tmp->getName()] = *tmp;
 	delete tmp;
 
-	tmp = new ConfigurationKey("GSM.Radio.RxGain","47",
+	tmp = new ConfigurationKey("GSM.Radio.RxGain","0",
 		"dB",
 		ConfigurationKey::FACTORY,
 		ConfigurationKey::VALRANGE,
-		"25:75",// educated guess
+		"0:75",// educated guess
 		true,
 		"Receiver gain setting in dB.  "
-			"Ideal value is dictated by the hardware; 47 dB for RAD1.  "
+			"Ideal value is dictated by the hardware; 47 dB for RAD1, less for USRPs  "
 			"This database parameter is static but the receiver gain can be modified in real time with the CLI rxgain command."
 	);
 	map[tmp->getName()] = *tmp;
@@ -2211,7 +2211,7 @@ ConfigurationKeyMap getConfigurationKeys()
 	map[tmp->getName()] = *tmp;
 	delete tmp;
 
-	tmp = new ConfigurationKey("Peering.NeighborTable.Path","/var/run/OpenBTS/NeighborTable.db",
+	tmp = new ConfigurationKey("Peering.NeighborTable.Path","/var/run/NeighborTable.db",
 		"",
 		ConfigurationKey::CUSTOMERWARN,
 		ConfigurationKey::FILEPATH,
