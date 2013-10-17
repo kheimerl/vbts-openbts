@@ -136,19 +136,15 @@ void startTransceiver()
 
 	// Start the transceiver binary, if the path is defined.
 	// If the path is not defined, the transceiver must be started by some other process.
-	char trans_args[20];
+	char TRXnumARFCN[4];
+	sprintf(TRXnumARFCN,"%1d",(int)gConfig.getNum("GSM.Radio.ARFCNs"));	
 	std::string extra_args = gConfig.getStr("TRX.Args");
-	if (extra_args.length() >= 8){
-		sprintf(trans_args,"%1d %s",(int)gConfig.getNum("GSM.Radio.ARFCNs"), extra_args.c_str());
-	} else{
-		sprintf(trans_args,"%1d",(int)gConfig.getNum("GSM.Radio.ARFCNs"));
-	}
-	LOG(NOTICE) << "starting transceiver " << transceiverPath << " " << trans_args;
+	LOG(NOTICE) << "starting transceiver " << transceiverPath << " w/ " << TRXnumARFCN << " ARFCNs and Args:" << extra_args;
 	gTransceiverPid = vfork();
 	LOG_ASSERT(gTransceiverPid>=0);
 	if (gTransceiverPid==0) {
 		// Pid==0 means this is the process that starts the transceiver.
-		execlp(transceiverPath,transceiverPath,trans_args,(void*)NULL);
+		execlp(transceiverPath,transceiverPath,TRXnumARFCN,extra_args.c_str(),(void*)NULL);
 		LOG(EMERG) << "cannot find " << transceiverPath;
 		_exit(1);
 	} else {
