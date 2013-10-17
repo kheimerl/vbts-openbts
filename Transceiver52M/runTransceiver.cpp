@@ -44,8 +44,10 @@
 
 using namespace std;
 
-ConfigurationKeyMap getConfigurationKeys();
-ConfigurationTable gConfig("/etc/OpenBTS/OpenBTS.db", 0, getConfigurationKeys());
+std::vector<std::string> configurationCrossCheck(const std::string& key);
+static const char *cOpenBTSConfigEnv = "OpenBTSConfigFile";
+// Load configuration from a file.
+ConfigurationTable gConfig(getenv(cOpenBTSConfigEnv)?getenv(cOpenBTSConfigEnv):"/etc/OpenBTS/OpenBTS.db","OpenBTS", getConfigurationKeys());
 
 volatile bool gbShutdown = false;
 static void ctrlCHandler(int signo)

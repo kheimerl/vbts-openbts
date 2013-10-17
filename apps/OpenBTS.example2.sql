@@ -221,7 +221,7 @@ INSERT OR IGNORE INTO "CONFIG" VALUES('SubscriberRegistry.UpstreamServer','',0,0
 INSERT OR IGNORE INTO "CONFIG" VALUES('SubscriberRegistry.db','/var/lib/asterisk/sqlite3dir/sqlite3.db',0,0,'The location of the sqlite3 database holding the subscriber registry.');
 INSERT OR IGNORE INTO "CONFIG" VALUES('TRX.IP','127.0.0.1',1,0,'IP address of the transceiver application.  Static.');
 INSERT OR IGNORE INTO "CONFIG" VALUES('TRX.MinimumRxRSSI','-63',0,0,'Bursts received at the physical layer below this threshold are automatically ignored.  Values in dB.  Set at the factory.  Do not adjust without proper calibration.');
-INSERT OR IGNORE INTO "CONFIG" VALUES('TRX.Port','5701',1,0,'IP port of the transceiver application.  Static.');
+INSERT OR IGNORE INTO "CONFIG" VALUES('TRX.Port','5710',1,0,'IP port of the transceiver application.  Static.');
 INSERT OR IGNORE INTO "CONFIG" VALUES('TRX.RadioFrequencyOffset','128',1,0,'Fine-tuning adjustment for the transceiver master clock.  Roughly 170 Hz/step.  Set at the factory.  Do not adjust without proper calibration.  Static.');
 INSERT OR IGNORE INTO "CONFIG" VALUES('TRX.Timeout.Clock','10',0,0,'How long to wait during a read operation from the transceiver before giving up.');
 INSERT OR IGNORE INTO "CONFIG" VALUES('TRX.Timeout.Start','2',0,0,'How long to wait during system startup before checking to see if the transceiver can be reached.');
