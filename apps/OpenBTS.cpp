@@ -139,7 +139,7 @@ void startTransceiver()
 	char trans_args[20];
 	std::string extra_args = gConfig.getStr("TRX.Args");
 	if (extra_args.length() >= 8){
-		sprintf(trans_args,"%1d serial=%s",(int)gConfig.getNum("GSM.Radio.ARFCNs"), extra_args.c_str());
+		sprintf(trans_args,"%1d %s",(int)gConfig.getNum("GSM.Radio.ARFCNs"), extra_args.c_str());
 	} else{
 		sprintf(trans_args,"%1d",(int)gConfig.getNum("GSM.Radio.ARFCNs"));
 	}
