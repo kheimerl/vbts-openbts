@@ -2718,7 +2718,7 @@ ConfigurationKeyMap getConfigurationKeys()
 		"",
 		ConfigurationKey::CUSTOMER,
 		ConfigurationKey::STRING,
-		"^[A-Z0-9]+$",
+		"",
 		false,
 		"Extra arguments for the Transceiver"
 	);
