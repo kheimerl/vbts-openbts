@@ -161,7 +161,6 @@ INSERT OR IGNORE INTO "CONFIG" VALUES('GSM.RRLP.SEED.LATITUDE','37.777423',0,0,'
 INSERT OR IGNORE INTO "CONFIG" VALUES('GSM.RRLP.SEED.LONGITUDE','-122.39807',0,0,'Seed longitude in degrees.  -180 (west of greenwich) .. 180 (east)');
 INSERT OR IGNORE INTO "CONFIG" VALUES('GSM.RRLP.SERVER.URL','',0,0,'URL of RRLP server.  By default, this feature is disabled.  To enable, specify a server URL eg: http://localhost/cgi/rrlpserver.cgi.  To disable again, execute "unconfig GSM.RRLP.SERVER.URL".');
 INSERT OR IGNORE INTO "CONFIG" VALUES('GSM.Radio.ARFCNs','1',1,0,'The number of ARFCNs to use.  The ARFCN set will be C0, C0+2, C0+4, etc.  Static.');
-INSERT OR IGNORE INTO "CONFIG" VALUES('GSM.Radio.USRPSerial','',1,0,'The Serial number of the USRP you wish to use');
 INSERT OR IGNORE INTO "CONFIG" VALUES('GSM.Radio.Band','900',1,0,'The GSM operating band.  Valid values are 850 (GSM850), 900 (PGSM900), 1800 (DCS1800) and 1900 (PCS1900).  For non-multiband units, this value is dictated by the hardware and should not be changed.  Static.');
 INSERT OR IGNORE INTO "CONFIG" VALUES('GSM.Radio.C0','51',1,0,'The C0 ARFCN.  Also the base ARFCN for a multi-ARFCN configuration.  Static.');
 INSERT OR IGNORE INTO "CONFIG" VALUES('GSM.Radio.MaxExpectedDelaySpread','4',0,0,'Expected worst-case delay spread in symbol periods, roughly 3.7 us or 1.1 km per unit.  This parameter is dependent on the terrain type in the installation area.  Typical values are 1 for open terrain and small coverage areas.  For large coverage areas, a value of 4 is strongly recommended.  This parameter has a large effect on computational requirements of the software radio; values greater than 4 should be avoided.');
@@ -227,6 +226,7 @@ INSERT OR IGNORE INTO "CONFIG" VALUES('TRX.RadioFrequencyOffset','128',1,0,'Fine
 INSERT OR IGNORE INTO "CONFIG" VALUES('TRX.Timeout.Clock','10',0,0,'How long to wait during a read operation from the transceiver before giving up.');
 INSERT OR IGNORE INTO "CONFIG" VALUES('TRX.Timeout.Start','2',0,0,'How long to wait during system startup before checking to see if the transceiver can be reached.');
 INSERT OR IGNORE INTO "CONFIG" VALUES('TRX.TxAttenOffset','0',1,0,'Hardware-specific gain adjustment for transmitter, matched to the power amplifier, expessed as an attenuationi in dB.  Set at the factory.  Do not adjust without proper calibration.  Static.');
+INSERT OR IGNORE INTO "CONFIG" VALUES('TRX.Args','',1,0,'Extra arguments for the Transceiver');
 INSERT OR IGNORE INTO "CONFIG" VALUES('Test.GSM.SimulatedFER.Downlink','0',1,0,'Probability (0-100) of dropping any downlink frame to test robustness.  Static.');
 INSERT OR IGNORE INTO "CONFIG" VALUES('Test.GSM.SimulatedFER.Uplink','0',1,0,'Probability (0-100) of dropping any uplink frame to test robustness.  Static.');
 INSERT OR IGNORE INTO "CONFIG" VALUES('Test.GSM.UplinkFuzzingRate','0',1,0,'Probability (0-100) of flipping a bit in any uplink frame to test robustness.  Static.');

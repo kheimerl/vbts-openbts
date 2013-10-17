@@ -1969,18 +1969,6 @@ ConfigurationKeyMap getConfigurationKeys()
 	map[tmp->getName()] = *tmp;
 	delete tmp;
 
-	//kurtis
-	tmp = new ConfigurationKey("GSM.Radio.USRPSerial","",
-		"",
-		ConfigurationKey::CUSTOMER,
-		ConfigurationKey::STRING,
-		"^[A-Z0-9]+$",
-		false,
-		"The Serial number of the USRP you wish to use"
-	);
-	map[tmp->getName()] = *tmp;
-	delete tmp;
-
 	tmp = new ConfigurationKey("GSM.Radio.Band","900",
 		"",
 		ConfigurationKey::CUSTOMERWARN,
@@ -2721,6 +2709,18 @@ ConfigurationKeyMap getConfigurationKeys()
 		"Hardware-specific gain adjustment for transmitter, matched to the power amplifier, expessed as an attenuationi in dB.  "
 			"Set at the factory.  "
 			"Do not adjust without proper calibration."
+	);
+	map[tmp->getName()] = *tmp;
+	delete tmp;
+
+	//kurtis
+	tmp = new ConfigurationKey("TRX.Args","",
+		"",
+		ConfigurationKey::CUSTOMER,
+		ConfigurationKey::STRING,
+		"^[A-Z0-9]+$",
+		false,
+		"Extra arguments for the Transceiver"
 	);
 	map[tmp->getName()] = *tmp;
 	delete tmp;
