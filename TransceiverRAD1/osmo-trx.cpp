@@ -21,7 +21,7 @@
 #endif
 
 #include "Transceiver.h"
-#include "radioDevice.h"
+#include "RAD1Device.h"
 
 #include <time.h>
 #include <signal.h>
@@ -188,32 +188,10 @@ bool trx_setup_config(struct trx_config *config)
  *     object, which may be operating some other rate.
  */
 RadioInterface *makeRadioInterface(struct trx_config *config,
-                                   RadioDevice *usrp, int type)
+                                   RadioDevice *usrp, int type,
+				   int mOversamplingRate, int numARFCN)
 {
-	RadioInterface *radio = NULL;
-
-	switch (type) {
-	case RadioDevice::NORMAL:
-		radio = new RadioInterface(usrp, config->sps, config->chans);
-		break;
-	case RadioDevice::RESAMP_64M:
-	case RadioDevice::RESAMP_100M:
-		radio = new RadioInterfaceResamp(usrp,
-						 config->sps, config->chans);
-		break;
-	case RadioDevice::DIVERSITY:
-		radio = new RadioInterfaceDiversity(usrp,
-						    config->sps, config->chans);
-		break;
-	default:
-		LOG(ALERT) << "Unsupported radio interface configuration";
-		return NULL;
-	}
-
-	if (!radio->init(type)) {
-		LOG(ALERT) << "Failed to initialize radio interface";
-		return NULL;
-	}
+	RadioInterface* radio = new RadioInterface(usrp,3,SAMPSPERSYM,mOversamplingRate,false,numARFCN);
 
 	return radio;
 }
@@ -224,28 +202,16 @@ RadioInterface *makeRadioInterface(struct trx_config *config,
  *     and decoding schemes. Also included are the socket interfaces for
  *     connecting to the upper layer stack.
  */
-Transceiver *makeTransceiver(struct trx_config *config, RadioInterface *radio)
+Transceiver *makeTransceiver(struct trx_config *config, RadioInterface *radio,
+			     int mOversamplingRate, int numARFCN)
 {
 	Transceiver *trx;
 	VectorFIFO *fifo;
 
-	trx = new Transceiver(config->port, config->addr.c_str(), config->sps,
-			      config->chans, GSM::Time(3,0), radio);
-	if (!trx->init()) {
-		LOG(ALERT) << "Failed to initialize transceiver";
-		delete trx;
-		return NULL;
-	}
+	trx = new Transceiver(gConfig.getNum("TRX.Port"),gConfig.getStr("TRX.IP").c_str(),SAMPSPERSYM,GSM::Time(2,0),radio,
+				     numARFCN,mOversamplingRate,false);
 
-	for (size_t i = 0; i < config->chans; i++) {
-		fifo = radio->receiveFIFO(i);
-		if (fifo && trx->receiveFIFO(fifo, i))
-			continue;
-
-		LOG(ALERT) << "Could not attach FIFO to channel " << i;
-		delete trx;
-		return NULL;
-	}
+	trx->receiveFIFO(radio->receiveFIFO());
 
 	return trx;
 }
@@ -338,10 +304,14 @@ static void handle_options(int argc, char **argv, struct trx_config *config)
 int main(int argc, char *argv[])
 {
 	int type, chans;
-	RadioDevice *usrp;
 	RadioInterface *radio = NULL;
 	Transceiver *trx = NULL;
 	struct trx_config config;
+
+	//short-term hack
+	int mOversamplingRate = 1;
+	int numARFCN = 1;
+	int deviceID = 0;
 
 	handle_options(argc, argv, &config);
 
@@ -358,28 +328,29 @@ int main(int argc, char *argv[])
 	srandom(time(NULL));
 
 	/* Create the low level device object */
-	usrp = RadioDevice::make(config.sps, config.chans, config.diversity);
-	type = usrp->open(config.dev_args, config.extref);
-	if (type < 0) {
-		LOG(ALERT) << "Failed to create radio device" << std::endl;
-		goto shutdown;
-	}
+	RAD1Device *usrp = new RAD1Device(mOversamplingRate*1625.0e3/6.0);
+	usrp->make(false, deviceID); 
+
+	//type = usrp->open(config.dev_args, config.extref);
+	//if (type < 0) {
+	//	LOG(ALERT) << "Failed to create radio device" << std::endl;
+	//	goto shutdown;
+	//}
 
 	/* Setup the appropriate device interface */
-	radio = makeRadioInterface(&config, usrp, type);
+	radio = makeRadioInterface(&config, usrp, type, mOversamplingRate, numARFCN);
 	if (!radio)
 		goto shutdown;
 
 	/* Create the transceiver core */
-	trx = makeTransceiver(&config, radio);
+	trx = makeTransceiver(&config, radio, mOversamplingRate, numARFCN);
 	if (!trx)
 		goto shutdown;
 
 	trx->start();
 
-	chans = trx->numChans();
 	std::cout << "-- Transceiver active with "
-		  << chans << " channel(s)" << std::endl;
+		  << numARFCN << " channel(s)" << std::endl;
 
 	while (!gshutdown)
 		sleep(1);

@@ -26,7 +26,7 @@
 #include <FactoryCalibration.h>
 
 extern ConfigurationTable gConfig;
-extern FactoryCalibration gFactoryCalibration;
+//extern FactoryCalibration gFactoryCalibration;
 
 Transceiver::Transceiver(int wBasePort,
 			 const char *TRXAddress,
@@ -701,9 +701,9 @@ void Transceiver::driveControl(unsigned ARFCN)
   else if (strcmp(command,"READFACTORY")==0) {
     char param[16];
     sscanf(buffer,"%3s %s %s",cmdcheck,command,&param);
-    int ret = gFactoryCalibration.getValue(std::string(param));
+    //int ret = gFactoryCalibration.getValue(std::string(param));
     // TODO : this should actually return the param name requested
-    sprintf(response,"RSP READFACTORY 0 %d", ret);
+    sprintf(response,"RSP READFACTORY 0 %d", -1);
   }
   else {
     LOG(ERR) << "bogus command " << command << " on control interface.";
