@@ -100,7 +100,7 @@ RAD1SN_LDADD = \
         $(COMMON_LA) $(SQLITE_LA)
 
 
-transceiver_SOURCES = runTransceiver.cpp
+transceiver_SOURCES = osmo-trx.cpp
 transceiver_LDADD = \
 	libtransceiver.la \
 	$(GSM_LA) \
