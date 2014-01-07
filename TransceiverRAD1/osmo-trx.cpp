@@ -65,11 +65,14 @@ struct trx_config {
 	unsigned port;
 	unsigned sps;
 	unsigned chans;
+	unsigned mOversamplingRate;
 	bool extref;
 	bool diversity;
 };
 
-ConfigurationTable gConfig;
+static const char *cOpenBTSConfigEnv = "OpenBTSConfigFile";
+// Load configuration from a file.
+ConfigurationTable gConfig(getenv(cOpenBTSConfigEnv)?getenv(cOpenBTSConfigEnv):"/etc/OpenBTS/OpenBTS.db","transceiver", getConfigurationKeys());
 
 volatile bool gshutdown = false;
 
@@ -158,6 +161,28 @@ bool trx_setup_config(struct trx_config *config)
 	if (!config->chans)
 		config->chans = DEFAULT_CHANS;
 
+	switch(config->chans) {
+   
+	case 1: 
+		config->mOversamplingRate = 1;
+		break;
+	case 2:
+		config->mOversamplingRate = 6;
+		break;
+	case 3:
+		config->mOversamplingRate = 8;
+		break;
+	case 4:
+		config->mOversamplingRate = 12;
+		break;
+	case 5:
+		config->mOversamplingRate = 16;
+		break;
+	default:
+		//TODO: should error here -kurtis
+		break;
+	}
+
 	/* Diversity only supported on 2 channels */
 	if (config->diversity)
 		config->chans = 2;
@@ -188,10 +213,9 @@ bool trx_setup_config(struct trx_config *config)
  *     object, which may be operating some other rate.
  */
 RadioInterface *makeRadioInterface(struct trx_config *config,
-                                   RadioDevice *usrp, int type,
-				   int mOversamplingRate, int numARFCN)
+                                   RadioDevice *usrp, int type)
 {
-	RadioInterface* radio = new RadioInterface(usrp,3,SAMPSPERSYM,mOversamplingRate,false,numARFCN);
+	RadioInterface* radio = new RadioInterface(usrp,3,config->sps,config->mOversamplingRate,false,config->chans);
 
 	return radio;
 }
@@ -202,14 +226,13 @@ RadioInterface *makeRadioInterface(struct trx_config *config,
  *     and decoding schemes. Also included are the socket interfaces for
  *     connecting to the upper layer stack.
  */
-Transceiver *makeTransceiver(struct trx_config *config, RadioInterface *radio,
-			     int mOversamplingRate, int numARFCN)
+Transceiver *makeTransceiver(struct trx_config *config, RadioInterface *radio)
 {
 	Transceiver *trx;
 	VectorFIFO *fifo;
 
-	trx = new Transceiver(gConfig.getNum("TRX.Port"),gConfig.getStr("TRX.IP").c_str(),SAMPSPERSYM,GSM::Time(2,0),radio,
-				     numARFCN,mOversamplingRate,false);
+	trx = new Transceiver(config->port,config->addr.c_str(),config->sps,GSM::Time(2,0),radio,
+			      config->chans,config->mOversamplingRate,false);
 
 	trx->receiveFIFO(radio->receiveFIFO());
 
@@ -309,8 +332,6 @@ int main(int argc, char *argv[])
 	struct trx_config config;
 
 	//short-term hack
-	int mOversamplingRate = 1;
-	int numARFCN = 1;
 	int deviceID = 0;
 
 	handle_options(argc, argv, &config);
@@ -328,7 +349,7 @@ int main(int argc, char *argv[])
 	srandom(time(NULL));
 
 	/* Create the low level device object */
-	RAD1Device *usrp = new RAD1Device(mOversamplingRate*1625.0e3/6.0);
+	RAD1Device *usrp = new RAD1Device((&config)->mOversamplingRate*1625.0e3/6.0);
 	usrp->make(false, deviceID); 
 
 	//type = usrp->open(config.dev_args, config.extref);
@@ -338,19 +359,19 @@ int main(int argc, char *argv[])
 	//}
 
 	/* Setup the appropriate device interface */
-	radio = makeRadioInterface(&config, usrp, type, mOversamplingRate, numARFCN);
+	radio = makeRadioInterface(&config, usrp, type);
 	if (!radio)
 		goto shutdown;
 
 	/* Create the transceiver core */
-	trx = makeTransceiver(&config, radio, mOversamplingRate, numARFCN);
+	trx = makeTransceiver(&config, radio);
 	if (!trx)
 		goto shutdown;
 
 	trx->start();
 
 	std::cout << "-- Transceiver active with "
-		  << numARFCN << " channel(s)" << std::endl;
+		  << (&config)->chans << " channel(s)" << std::endl;
 
 	while (!gshutdown)
 		sleep(1);
@@ -363,4 +384,39 @@ shutdown:
 	delete usrp;
 
 	return 0;
+}
+
+ConfigurationKeyMap getConfigurationKeys()
+{
+	ConfigurationKeyMap map;
+	ConfigurationKey *tmp;
+
+	tmp = new ConfigurationKey("TRX.RadioFrequencyOffset","128",
+		"~170Hz steps",
+		ConfigurationKey::FACTORY,
+		ConfigurationKey::VALRANGE,
+		"96:160",// educated guess
+		true,
+		"Fine-tuning adjustment for the transceiver master clock.  "
+			"Roughly 170 Hz/step.  "
+			"Set at the factory.  "
+			"Do not adjust without proper calibration."
+	);
+	map[tmp->getName()] = *tmp;
+	delete tmp;
+
+	tmp = new ConfigurationKey("TRX.TxAttenOffset","0",
+		"dB of attenuation",
+		ConfigurationKey::FACTORY,
+		ConfigurationKey::VALRANGE,
+		"0:100",// educated guess
+		true,
+		"Hardware-specific gain adjustment for transmitter, matched to the power amplifier, expessed as an attenuationi in dB.  "
+			"Set at the factory.  "
+			"Do not adjust without proper calibration."
+	);
+	map[tmp->getName()] = *tmp;
+	delete tmp;
+
+	return map;
 }

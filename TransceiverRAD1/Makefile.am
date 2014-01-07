@@ -46,7 +46,7 @@ libtransceiver_la_SOURCES = \
 
 noinst_PROGRAMS = \
 	RAD1ping \
-	transceiver \
+	osmo-trx \
 	sigProcLibTest \
 	RAD1Cmd \
 	RAD1SN \
@@ -100,8 +100,8 @@ RAD1SN_LDADD = \
         $(COMMON_LA) $(SQLITE_LA)
 
 
-transceiver_SOURCES = osmo-trx.cpp
-transceiver_LDADD = \
+osmo_trx_SOURCES = osmo-trx.cpp
+osmo_trx_LDADD = \
 	libtransceiver.la \
 	$(GSM_LA) \
 	$(COMMON_LA) $(SQLITE_LA) 
